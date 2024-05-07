@@ -24,8 +24,10 @@ public class CourseController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CourseResponse>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.service.getAll());
+    public ResponseEntity<List<CourseResponse>> get(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.getCourses(name, category));
     }
 
 }
