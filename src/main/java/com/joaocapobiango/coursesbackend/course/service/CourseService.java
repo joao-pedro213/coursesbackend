@@ -23,8 +23,17 @@ public class CourseService {
         return this.toCreationResponse(insertedCourse);
     }
 
-    public List<CourseResponse> getAll() {
-        var foundCourses = this.repository.findAll();
+    public List<CourseResponse> getCourses(String name, String category) {
+        List<Course> foundCourses;
+        if (name != null && category != null) {
+            foundCourses = this.repository.findByNameAndCategory(name, category);
+        } else if (name != null) {
+            foundCourses = this.repository.findByName(name);
+        } else if (category != null) {
+            foundCourses = this.repository.findByCategory(category);
+        } else {
+            foundCourses = this.repository.findAll();
+        }
         return this.toResponses(foundCourses);
     }
 
