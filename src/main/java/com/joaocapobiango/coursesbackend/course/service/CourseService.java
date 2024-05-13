@@ -1,8 +1,8 @@
 package com.joaocapobiango.coursesbackend.course.service;
 
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationRequest;
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationResponse;
-import com.joaocapobiango.coursesbackend.course.dto.CourseResponse;
+import com.joaocapobiango.coursesbackend.course.dto.CoursePostRequest;
+import com.joaocapobiango.coursesbackend.course.dto.CoursePostResponse;
+import com.joaocapobiango.coursesbackend.course.dto.CourseGetResponse;
 import com.joaocapobiango.coursesbackend.course.entity.Course;
 import com.joaocapobiango.coursesbackend.course.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ public class CourseService {
     @Autowired
     private CourseRepository repository;
 
-    public CourseCreationResponse create(CourseCreationRequest request) {
+    public CoursePostResponse create(CoursePostRequest request) {
         var courseToInsert = this.creationRequestToEntity(request);
         var insertedCourse = this.repository.save(courseToInsert);
         return this.toCreationResponse(insertedCourse);
     }
 
-    public List<CourseResponse> getCourses(String name, String category) {
+    public List<CourseGetResponse> getCourses(String name, String category) {
         List<Course> foundCourses;
         if (name != null && category != null) {
             foundCourses = this.repository.findByNameAndCategory(name, category);
@@ -37,7 +37,7 @@ public class CourseService {
         return this.toResponses(foundCourses);
     }
 
-    private Course creationRequestToEntity(CourseCreationRequest request) {
+    private Course creationRequestToEntity(CoursePostRequest request) {
         return Course
             .builder()
             .name(request.getName())
@@ -45,18 +45,18 @@ public class CourseService {
             .build();
     }
 
-    private CourseCreationResponse toCreationResponse(Course course) {
-        return CourseCreationResponse
+    private CoursePostResponse toCreationResponse(Course course) {
+        return CoursePostResponse
             .builder()
             .id(course.getId())
             .createdAt(course.getCreatedAt())
             .build();
     }
 
-    private List<CourseResponse> toResponses(List<Course> courses) {
-        var responses = new ArrayList<CourseResponse>();
+    private List<CourseGetResponse> toResponses(List<Course> courses) {
+        var responses = new ArrayList<CourseGetResponse>();
         for (Course course : courses) {
-           var response = CourseResponse
+           var response = CourseGetResponse
                 .builder()
                 .id(course.getId())
                 .name(course.getName())

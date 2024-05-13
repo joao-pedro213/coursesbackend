@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.OffsetDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseCreationResponse {
+public class CoursePostRequest {
 
-    private Long id;
+    private String name;
 
-    private OffsetDateTime createdAt;
+    private String category;
 
 }
