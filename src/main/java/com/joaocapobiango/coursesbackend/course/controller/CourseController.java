@@ -1,8 +1,6 @@
 package com.joaocapobiango.coursesbackend.course.controller;
 
-import com.joaocapobiango.coursesbackend.course.dto.CoursePostRequest;
-import com.joaocapobiango.coursesbackend.course.dto.CoursePostResponse;
-import com.joaocapobiango.coursesbackend.course.dto.CourseGetResponse;
+import com.joaocapobiango.coursesbackend.course.dto.*;
 import com.joaocapobiango.coursesbackend.course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +26,13 @@ public class CourseController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.getCourses(name, category));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CoursePatchResponse> update(
+            @PathVariable Long id,
+            @RequestBody CoursePatchRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.update(id, request));
     }
 
 }

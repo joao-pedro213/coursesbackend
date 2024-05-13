@@ -1,10 +1,9 @@
 package com.joaocapobiango.coursesbackend.course.service;
 
-import com.joaocapobiango.coursesbackend.course.dto.CoursePostRequest;
-import com.joaocapobiango.coursesbackend.course.dto.CoursePostResponse;
-import com.joaocapobiango.coursesbackend.course.dto.CourseGetResponse;
+import com.joaocapobiango.coursesbackend.course.dto.*;
 import com.joaocapobiango.coursesbackend.course.entity.Course;
 import com.joaocapobiango.coursesbackend.course.repository.CourseRepository;
+import com.joaocapobiango.coursesbackend.exception.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +17,9 @@ public class CourseService {
     private CourseRepository repository;
 
     public CoursePostResponse create(CoursePostRequest request) {
-        var courseToInsert = this.creationRequestToEntity(request);
+        var courseToInsert = this.postRequestToEntity(request);
         var insertedCourse = this.repository.save(courseToInsert);
-        return this.toCreationResponse(insertedCourse);
+        return this.toPostResponse(insertedCourse);
     }
 
     public List<CourseGetResponse> getCourses(String name, String category) {
@@ -37,7 +36,19 @@ public class CourseService {
         return this.toResponses(foundCourses);
     }
 
-    private Course creationRequestToEntity(CoursePostRequest request) {
+    public CoursePatchResponse update(Long id, CoursePatchRequest request) {
+        var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
+        if (request.getName() != null) {
+            courseToUpdate.setName(request.getName());
+        }
+        if (request.getCategory() != null) {
+            courseToUpdate.setCategory(request.getCategory());
+        }
+        var updatedCourse = this.repository.save(courseToUpdate);
+       return this.toPatchResponse(updatedCourse);
+    }
+
+    private Course postRequestToEntity(CoursePostRequest request) {
         return Course
             .builder()
             .name(request.getName())
@@ -45,7 +56,7 @@ public class CourseService {
             .build();
     }
 
-    private CoursePostResponse toCreationResponse(Course course) {
+    private CoursePostResponse toPostResponse(Course course) {
         return CoursePostResponse
             .builder()
             .id(course.getId())
@@ -68,6 +79,14 @@ public class CourseService {
             responses.add(response);
         }
         return responses;
+    }
+
+    private CoursePatchResponse toPatchResponse(Course course) {
+        return CoursePatchResponse
+            .builder()
+            .id(course.getId())
+            .updatedAt(course.getUpdatedAt())
+            .build();
     }
 
 }
