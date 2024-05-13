@@ -1,6 +1,5 @@
 package com.joaocapobiango.coursesbackend.course.dto;
 
-import com.joaocapobiango.coursesbackend.course.entity.CourseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.time.OffsetDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponse {
+public class CourseGetResponse {
 
     private Long id;
 

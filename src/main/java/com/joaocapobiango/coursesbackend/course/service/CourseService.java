@@ -1,10 +1,9 @@
 package com.joaocapobiango.coursesbackend.course.service;
 
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationRequest;
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationResponse;
-import com.joaocapobiango.coursesbackend.course.dto.CourseResponse;
+import com.joaocapobiango.coursesbackend.course.dto.*;
 import com.joaocapobiango.coursesbackend.course.entity.Course;
 import com.joaocapobiango.coursesbackend.course.repository.CourseRepository;
+import com.joaocapobiango.coursesbackend.exception.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +16,13 @@ public class CourseService {
     @Autowired
     private CourseRepository repository;
 
-    public CourseCreationResponse create(CourseCreationRequest request) {
-        var courseToInsert = this.creationRequestToEntity(request);
+    public CoursePostResponse create(CoursePostRequest request) {
+        var courseToInsert = this.postRequestToEntity(request);
         var insertedCourse = this.repository.save(courseToInsert);
-        return this.toCreationResponse(insertedCourse);
+        return this.toPostResponse(insertedCourse);
     }
 
-    public List<CourseResponse> getCourses(String name, String category) {
+    public List<CourseGetResponse> getCourses(String name, String category) {
         List<Course> foundCourses;
         if (name != null && category != null) {
             foundCourses = this.repository.findByNameAndCategory(name, category);
@@ -37,7 +36,19 @@ public class CourseService {
         return this.toResponses(foundCourses);
     }
 
-    private Course creationRequestToEntity(CourseCreationRequest request) {
+    public CoursePatchResponse update(Long id, CoursePatchRequest request) {
+        var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
+        if (request.getName() != null) {
+            courseToUpdate.setName(request.getName());
+        }
+        if (request.getCategory() != null) {
+            courseToUpdate.setCategory(request.getCategory());
+        }
+        var updatedCourse = this.repository.save(courseToUpdate);
+       return this.toPatchResponse(updatedCourse);
+    }
+
+    private Course postRequestToEntity(CoursePostRequest request) {
         return Course
             .builder()
             .name(request.getName())
@@ -45,18 +56,18 @@ public class CourseService {
             .build();
     }
 
-    private CourseCreationResponse toCreationResponse(Course course) {
-        return CourseCreationResponse
+    private CoursePostResponse toPostResponse(Course course) {
+        return CoursePostResponse
             .builder()
             .id(course.getId())
             .createdAt(course.getCreatedAt())
             .build();
     }
 
-    private List<CourseResponse> toResponses(List<Course> courses) {
-        var responses = new ArrayList<CourseResponse>();
+    private List<CourseGetResponse> toResponses(List<Course> courses) {
+        var responses = new ArrayList<CourseGetResponse>();
         for (Course course : courses) {
-           var response = CourseResponse
+           var response = CourseGetResponse
                 .builder()
                 .id(course.getId())
                 .name(course.getName())
@@ -68,6 +79,14 @@ public class CourseService {
             responses.add(response);
         }
         return responses;
+    }
+
+    private CoursePatchResponse toPatchResponse(Course course) {
+        return CoursePatchResponse
+            .builder()
+            .id(course.getId())
+            .updatedAt(course.getUpdatedAt())
+            .build();
     }
 
 }

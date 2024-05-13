@@ -1,8 +1,6 @@
 package com.joaocapobiango.coursesbackend.course.controller;
 
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationRequest;
-import com.joaocapobiango.coursesbackend.course.dto.CourseCreationResponse;
-import com.joaocapobiango.coursesbackend.course.dto.CourseResponse;
+import com.joaocapobiango.coursesbackend.course.dto.*;
 import com.joaocapobiango.coursesbackend.course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,15 +17,22 @@ public class CourseController {
     private CourseService service;
 
     @PostMapping
-    public ResponseEntity<CourseCreationResponse> create(@RequestBody CourseCreationRequest request) {
+    public ResponseEntity<CoursePostResponse> create(@RequestBody CoursePostRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.create(request));
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CourseResponse>> get(
+    public ResponseEntity<List<CourseGetResponse>> get(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.getCourses(name, category));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CoursePatchResponse> update(
+            @PathVariable Long id,
+            @RequestBody CoursePatchRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.update(id, request));
     }
 
 }
