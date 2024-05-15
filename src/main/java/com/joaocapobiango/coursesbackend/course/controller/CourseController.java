@@ -28,11 +28,16 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.getCourses(name, category));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<CoursePatchResponse> update(
+    @PutMapping("/{id}")
+    public ResponseEntity<CoursePutResponse> update(
             @PathVariable Long id,
-            @RequestBody CoursePatchRequest request) {
+            @RequestBody CoursePutRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.update(id, request));
+    }
+
+    @PatchMapping("{id}/active")
+    public ResponseEntity<CoursePatchResponse> toggleStatus(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.toggleStatus(id));
     }
 
 }
