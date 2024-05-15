@@ -2,6 +2,7 @@ package com.joaocapobiango.coursesbackend.course.service;
 
 import com.joaocapobiango.coursesbackend.course.dto.*;
 import com.joaocapobiango.coursesbackend.course.entity.Course;
+import com.joaocapobiango.coursesbackend.course.entity.CourseStatus;
 import com.joaocapobiango.coursesbackend.course.repository.CourseRepository;
 import com.joaocapobiango.coursesbackend.exception.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class CourseService {
         return this.toResponses(foundCourses);
     }
 
-    public CoursePatchResponse update(Long id, CoursePatchRequest request) {
+    public CoursePutResponse update(Long id, CoursePutRequest request) {
         var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
         if (request.getName() != null) {
             courseToUpdate.setName(request.getName());
@@ -45,7 +46,18 @@ public class CourseService {
             courseToUpdate.setCategory(request.getCategory());
         }
         var updatedCourse = this.repository.save(courseToUpdate);
-       return this.toPatchResponse(updatedCourse);
+       return this.toPutResponse(updatedCourse);
+    }
+
+    public CoursePatchResponse toggleStatus(Long id) {
+        var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
+        if (courseToUpdate.getStatus() == CourseStatus.ACTIVE) {
+            courseToUpdate.setStatus(CourseStatus.INACTIVE);
+        } else {
+            courseToUpdate.setStatus(CourseStatus.ACTIVE);
+        }
+        var updatedCourse = this.repository.save(courseToUpdate);
+        return this.toPatchResponse(updatedCourse);
     }
 
     private Course postRequestToEntity(CoursePostRequest request) {
@@ -81,10 +93,19 @@ public class CourseService {
         return responses;
     }
 
+    private CoursePutResponse toPutResponse(Course course) {
+        return CoursePutResponse
+            .builder()
+            .id(course.getId())
+            .updatedAt(course.getUpdatedAt())
+            .build();
+    }
+
     private CoursePatchResponse toPatchResponse(Course course) {
         return CoursePatchResponse
             .builder()
             .id(course.getId())
+            .status(course.getStatus().name())
             .updatedAt(course.getUpdatedAt())
             .build();
     }
