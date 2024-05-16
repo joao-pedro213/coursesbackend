@@ -11,9 +11,17 @@ import java.time.OffsetDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CoursePutResponse {
+public class CourseResponse {
 
     private Long id;
+
+    private String name;
+
+    private String category;
+
+    private String status;
+
+    private OffsetDateTime createdAt;
 
     private OffsetDateTime updatedAt;
 
