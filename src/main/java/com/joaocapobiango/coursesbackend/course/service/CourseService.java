@@ -60,6 +60,10 @@ public class CourseService {
         return this.toPatchResponse(updatedCourse);
     }
 
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
     private Course postRequestToEntity(CoursePostRequest request) {
         return Course
             .builder()

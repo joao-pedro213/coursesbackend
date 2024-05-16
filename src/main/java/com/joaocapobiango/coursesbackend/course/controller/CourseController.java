@@ -40,4 +40,10 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.toggleStatus(id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
