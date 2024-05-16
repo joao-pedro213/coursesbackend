@@ -17,26 +17,24 @@ public class CourseController {
     private CourseService service;
 
     @PostMapping
-    public ResponseEntity<CoursePostResponse> create(@RequestBody CoursePostRequest request) {
+    public ResponseEntity<CourseResponse> create(@RequestBody CoursePostRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.create(request));
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CourseGetResponse>> get(
+    public ResponseEntity<List<CourseResponse>> get(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.service.getCourses(name, category));
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.getAll(name, category));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CoursePutResponse> update(
-            @PathVariable Long id,
-            @RequestBody CoursePutRequest request) {
+    public ResponseEntity<CourseResponse> update(@PathVariable Long id, @RequestBody CoursePutRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.update(id, request));
     }
 
     @PatchMapping("{id}/active")
-    public ResponseEntity<CoursePatchResponse> toggleStatus(@PathVariable Long id) {
+    public ResponseEntity<CourseResponse> toggleStatus(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.toggleStatus(id));
     }
 

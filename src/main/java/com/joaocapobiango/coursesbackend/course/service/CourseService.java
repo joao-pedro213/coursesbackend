@@ -17,13 +17,13 @@ public class CourseService {
     @Autowired
     private CourseRepository repository;
 
-    public CoursePostResponse create(CoursePostRequest request) {
+    public CourseResponse create(CoursePostRequest request) {
         var courseToInsert = this.postRequestToEntity(request);
         var insertedCourse = this.repository.save(courseToInsert);
-        return this.toPostResponse(insertedCourse);
+        return this.toResponse(insertedCourse);
     }
 
-    public List<CourseGetResponse> getCourses(String name, String category) {
+    public List<CourseResponse> getAll(String name, String category) {
         List<Course> foundCourses;
         if (name != null && category != null) {
             foundCourses = this.repository.findByNameAndCategory(name, category);
@@ -37,7 +37,7 @@ public class CourseService {
         return this.toResponses(foundCourses);
     }
 
-    public CoursePutResponse update(Long id, CoursePutRequest request) {
+    public CourseResponse update(Long id, CoursePutRequest request) {
         var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
         if (request.getName() != null) {
             courseToUpdate.setName(request.getName());
@@ -46,10 +46,10 @@ public class CourseService {
             courseToUpdate.setCategory(request.getCategory());
         }
         var updatedCourse = this.repository.save(courseToUpdate);
-       return this.toPutResponse(updatedCourse);
+       return this.toResponse(updatedCourse);
     }
 
-    public CoursePatchResponse toggleStatus(Long id) {
+    public CourseResponse toggleStatus(Long id) {
         var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
         if (courseToUpdate.getStatus() == CourseStatus.ACTIVE) {
             courseToUpdate.setStatus(CourseStatus.INACTIVE);
@@ -57,7 +57,7 @@ public class CourseService {
             courseToUpdate.setStatus(CourseStatus.ACTIVE);
         }
         var updatedCourse = this.repository.save(courseToUpdate);
-        return this.toPatchResponse(updatedCourse);
+        return this.toResponse(updatedCourse);
     }
 
     public void delete(Long id) {
@@ -72,18 +72,22 @@ public class CourseService {
             .build();
     }
 
-    private CoursePostResponse toPostResponse(Course course) {
-        return CoursePostResponse
+    private CourseResponse toResponse(Course course) {
+        return CourseResponse
             .builder()
             .id(course.getId())
+            .name(course.getName())
+            .category(course.getCategory())
+            .status(course.getStatus().name())
             .createdAt(course.getCreatedAt())
+            .updatedAt(course.getUpdatedAt())
             .build();
     }
 
-    private List<CourseGetResponse> toResponses(List<Course> courses) {
-        var responses = new ArrayList<CourseGetResponse>();
+    private List<CourseResponse> toResponses(List<Course> courses) {
+        var responses = new ArrayList<CourseResponse>();
         for (Course course : courses) {
-           var response = CourseGetResponse
+           var response = CourseResponse
                 .builder()
                 .id(course.getId())
                 .name(course.getName())
@@ -95,23 +99,6 @@ public class CourseService {
             responses.add(response);
         }
         return responses;
-    }
-
-    private CoursePutResponse toPutResponse(Course course) {
-        return CoursePutResponse
-            .builder()
-            .id(course.getId())
-            .updatedAt(course.getUpdatedAt())
-            .build();
-    }
-
-    private CoursePatchResponse toPatchResponse(Course course) {
-        return CoursePatchResponse
-            .builder()
-            .id(course.getId())
-            .status(course.getStatus().name())
-            .updatedAt(course.getUpdatedAt())
-            .build();
     }
 
 }
