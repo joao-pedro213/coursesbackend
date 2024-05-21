@@ -1,8 +1,3 @@
-# Project Context
-
-This project is the solution to the first challenge from the Java Ignite course by Rocketseat. The main objective of
-this challenge was to implement a CRUD API using the knowledge acquired after the completion of the first modules.
-
 # Infrastructure
 
 To set up the environment, you'll need to create a file named ".env" in the project's root directory. Fill this file
@@ -49,8 +44,8 @@ Should create a course. Body request example:
 Should update a course by its id. Body request example:
 ```
 {
-"name": "Java Spring Boot",
-"category": "Intermediate"
+    "name": "Java Spring Boot",
+    "category": "Intermediate"
 }
 ```
 
