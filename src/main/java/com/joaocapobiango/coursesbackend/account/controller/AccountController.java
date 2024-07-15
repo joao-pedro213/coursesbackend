@@ -1,4 +1,4 @@
-package com.joaocapobiango.coursesbackend.account;
+package com.joaocapobiango.coursesbackend.account.controller;
 
 import com.joaocapobiango.coursesbackend.account.dto.AccountPostRequest;
 import com.joaocapobiango.coursesbackend.account.dto.AccountPutRequest;
