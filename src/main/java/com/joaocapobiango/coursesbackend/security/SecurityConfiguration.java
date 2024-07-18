@@ -13,7 +13,9 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authentication -> {
-                    authentication.requestMatchers("/app/account/**").permitAll();
+                    authentication
+                        .requestMatchers("/app/course/**").permitAll()
+                        .requestMatchers("/app/account/**").permitAll();
                     authentication.anyRequest().authenticated();
                 });
         return httpSecurity.build();

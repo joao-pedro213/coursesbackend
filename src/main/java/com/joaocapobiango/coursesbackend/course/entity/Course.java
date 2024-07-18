@@ -1,5 +1,6 @@
 package com.joaocapobiango.coursesbackend.course.entity;
 
+import com.joaocapobiango.coursesbackend.account.entity.Account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
+    @ManyToOne
+    private Account account;
 
     @NotEmpty
     private String name;
