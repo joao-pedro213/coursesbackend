@@ -6,6 +6,7 @@ import com.joaocapobiango.coursesbackend.account.dto.AccountResponse;
 import com.joaocapobiango.coursesbackend.account.repository.AccountRepository;
 import com.joaocapobiango.coursesbackend.exception.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,8 +18,13 @@ public class AccountService {
     @Autowired
     private AccountMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public AccountResponse create(AccountPostRequest request) {
         var accountToInsert = this.mapper.postRequestToEntity(request);
+        var encodedPassword = this.passwordEncoder.encode(accountToInsert.getPassword());
+        accountToInsert.setPassword(encodedPassword);
         var insertedAccount = this.repository.save(accountToInsert);
         return this.mapper.toResponse(insertedAccount);
     }
@@ -34,7 +40,8 @@ public class AccountService {
             accountToUpdate.setUsername(request.getUsername());
         }
         if (request.getPassword() != null) {
-            accountToUpdate.setPassword(request.getPassword());
+            var encodedPassword = this.passwordEncoder.encode(request.getPassword());
+            accountToUpdate.setPassword(encodedPassword);
         }
         var updatedAccount = this.repository.save(accountToUpdate);
         return this.mapper.toResponse(updatedAccount);
