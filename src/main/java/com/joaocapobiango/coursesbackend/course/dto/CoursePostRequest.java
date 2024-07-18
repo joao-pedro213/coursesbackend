@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CoursePostRequest {
 
+    private Long accountId;
+
     private String name;
 
     private String category;

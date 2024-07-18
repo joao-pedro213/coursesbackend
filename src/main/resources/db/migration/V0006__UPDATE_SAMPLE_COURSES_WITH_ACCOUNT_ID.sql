@@ -1,0 +1,1 @@
+update course set account_id = (select id from account order by created_at asc limit 1);

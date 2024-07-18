@@ -1,0 +1,1 @@
+alter table course add column account_id integer;
