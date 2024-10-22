@@ -47,8 +47,4 @@ public class AccountService {
         return this.mapper.toResponse(updatedAccount);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
-
 }

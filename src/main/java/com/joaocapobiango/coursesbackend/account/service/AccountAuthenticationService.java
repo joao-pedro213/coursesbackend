@@ -2,10 +2,9 @@ package com.joaocapobiango.coursesbackend.account.service;
 
 import javax.naming.AuthenticationException;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.joaocapobiango.coursesbackend.account.dto.AccountAuthentication;
 import com.joaocapobiango.coursesbackend.account.repository.AccountRepository;
+import com.joaocapobiango.coursesbackend.providers.JWTProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,31 +17,25 @@ import java.time.Instant;
 @Service
 public class AccountAuthenticationService {
 
-    @Value("${security.token.secret}")
-    private String secretKey;
-
     @Autowired
     private AccountRepository repository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JWTProvider jwtProvider;
+
     public String authenticate(AccountAuthentication accountAuthentication) throws AuthenticationException {
         var account = this.repository
             .findByUsername(accountAuthentication.getUsername())
             .orElseThrow(() -> new UsernameNotFoundException("Account username/password incorrect"));
-        var passwordMatches = this.passwordEncoder.matches(accountAuthentication.getPassword(), account.getPassword());
+        var passwordMatches = this.passwordEncoder
+            .matches(accountAuthentication.getPassword(), account.getPassword());
         if (!passwordMatches) {
             throw new AuthenticationException();
         }
-        var algorithm = Algorithm.HMAC256(this.secretKey);
-        var token = JWT
-            .create()
-            .withIssuer("CoursesAPI")
-            .withSubject(account.getId().toString())
-            .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
-            .sign(algorithm);
-        return token;
+        return this.jwtProvider.createToken(account.getId().toString(), null);
     }
 
 }

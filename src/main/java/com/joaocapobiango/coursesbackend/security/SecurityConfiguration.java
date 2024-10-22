@@ -22,7 +22,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authentication -> {
                     authentication
                         .requestMatchers("/app/account/**").permitAll()
-                        .requestMatchers("/app/auth/account/**").permitAll();
+                        .requestMatchers("/app/auth/account/**").permitAll()
+                        .requestMatchers("/app/course/").permitAll();
                     authentication.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, BasicAuthenticationFilter.class);
