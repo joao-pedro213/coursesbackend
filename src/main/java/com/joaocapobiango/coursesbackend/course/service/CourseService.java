@@ -19,8 +19,8 @@ public class CourseService {
     @Autowired
     private CourseMapper mapper;
 
-    public CourseResponse create(CoursePostRequest request) {
-        var courseToInsert = this.mapper.postRequestToEntity(request);
+    public CourseResponse create(CoursePostRequest coursePostRequest) {
+        var courseToInsert = this.mapper.postRequestToEntity(coursePostRequest);
         var insertedCourse = this.repository.save(courseToInsert);
         return this.mapper.toResponse(insertedCourse);
     }
@@ -39,20 +39,24 @@ public class CourseService {
         return this.mapper.toResponses(foundCourses);
     }
 
-    public CourseResponse update(Long id, CoursePutRequest request) {
-        var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
-        if (request.getName() != null) {
-            courseToUpdate.setName(request.getName());
+    public CourseResponse update(Long id, Long accountId, CoursePutRequest coursePutRequest) {
+        var courseToUpdate = this.repository
+            .findByIdAndAccountId(id, accountId)
+            .orElseThrow(() -> new ResourceNotFound(id));
+        if (coursePutRequest.getName() != null) {
+            courseToUpdate.setName(coursePutRequest.getName());
         }
-        if (request.getCategory() != null) {
-            courseToUpdate.setCategory(request.getCategory());
+        if (coursePutRequest.getCategory() != null) {
+            courseToUpdate.setCategory(coursePutRequest.getCategory());
         }
         var updatedCourse = this.repository.save(courseToUpdate);
        return this.mapper.toResponse(updatedCourse);
     }
 
-    public CourseResponse toggleStatus(Long id) {
-        var courseToUpdate = this.repository.findById(id).orElseThrow(() -> new ResourceNotFound(id));
+    public CourseResponse toggleStatus(Long id, Long accountId) {
+        var courseToUpdate = this.repository
+            .findByIdAndAccountId(id, accountId)
+            .orElseThrow(() -> new ResourceNotFound(id));
         if (courseToUpdate.getStatus() == CourseStatus.ACTIVE) {
             courseToUpdate.setStatus(CourseStatus.INACTIVE);
         } else {
@@ -62,8 +66,11 @@ public class CourseService {
         return this.mapper.toResponse(updatedCourse);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Long id, Long accountId) {
+        var courseToDelete = this.repository.findByIdAndAccountId(id, accountId);
+        if (!courseToDelete.isEmpty()) {
+            repository.deleteById(id);
+        }
     }
 
 }

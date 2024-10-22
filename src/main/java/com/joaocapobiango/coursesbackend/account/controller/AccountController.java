@@ -31,10 +31,4 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(this.service.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }

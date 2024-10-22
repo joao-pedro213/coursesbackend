@@ -19,6 +19,8 @@ public class AccountResponse {
 
     private String username;
 
+    private String password;
+
     private OffsetDateTime createdAt;
 
     private OffsetDateTime updatedAt;
